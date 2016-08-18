@@ -7,11 +7,10 @@
     use yii\helpers\FileHelper;
 
     class FileManager{
-        const FORMAT_JSON = 'json';
+        const FORMAT_JSON   = 'json';
         const FORMAT_STRING = 'string';
-        const FORMAT_BASE = 'base';
-
-        private static $_fileManager    = null;
+        const FORMAT_BASE   = 'base';
+        private static $_fileManager = null;
         private        $storagePath;
         private        $storageUrl;
         private        $attributeName;
@@ -36,7 +35,8 @@
             return self::$_fileManager;
         }
 
-        public function uploadFile(FileManagerModel $model, $targetDir, $sessionEnable = false){
+        public function uploadFile(FileManagerModel $model, $targetDir, $sessionEnable = false,
+                                   $format = self::FORMAT_JSON){
             if($model->validate()){
                 $today = date('Y-m-d');
                 $directory = $targetDir.DIRECTORY_SEPARATOR.$today;
@@ -46,24 +46,36 @@
                 if($model->uploadFile($directory.DIRECTORY_SEPARATOR)
                          ->hasErrors()
                 ){
-                    return $this->sendResponse(['error' => $model->getErrors($this->attributeName)]);
+                    return $this->createResponse(['error' => $model->getErrors($this->attributeName)], $format);
                 }
                 if($sessionEnable){
                     $this->saveToSession($model->savePath);
                 }
 
-                return $this->sendResponse([
-                                               'file' => [
-                                                   'storageUrl' => Yii::$app->fileManager->storageUrl,
-                                                   'path'       => $model->savePath
-                                               ]
-                                           ]);
+                return $this->createResponse([
+                                                 'file' => [
+                                                     'storageUrl' => Yii::$app->fileManager->storageUrl,
+                                                     'path' => $model->savePath
+                                                 ]
+                                             ], $format);
             }
 
-            return $this->sendResponse(['error' => $model->getErrors($this->attributeName)]);
+            return $this->createResponse(['error' => $model->getErrors($this->attributeName)], $format);
         }
 
-        public function sendResponse($data, $format = self::FORMAT_JSON){
+        public function removeFile($path, $format = self::FORMAT_JSON){
+            $fullPath = $this->storagePath.$path;
+            if(file_exists($fullPath)){
+                if(!unlink($fullPath)){
+                    return $this->createResponse(['error' => ['Can not delete file']], $format);
+                }
+            }
+            $this->removeFromSession($path);
+
+            return $this->createResponse(['success' => ['file removed']], $format);
+        }
+
+        public function createResponse($data, $format = self::FORMAT_JSON){
             switch($format){
                 case self::FORMAT_JSON:
                     $data = json_encode($data);
