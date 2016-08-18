@@ -1,5 +1,6 @@
 <?php
     namespace yii\alexposseda\fileManager;
+    use alexposseda\filemanager\models\FileManagerModel;
     use Yii;
     use yii\base\Exception;
     use yii\base\InvalidConfigException;
@@ -35,7 +36,7 @@
             return self::$_fileManager;
         }
 
-        public function uploadFile($model, $targetDir, $sessionEnable = false){
+        public function uploadFile(FileManagerModel $model, $targetDir, $sessionEnable = false){
             if($model->validate()){
                 $today = date('Y-m-d');
                 $directory = $targetDir.DIRECTORY_SEPARATOR.$today;
@@ -45,7 +46,7 @@
                 if($model->uploadFile($directory.DIRECTORY_SEPARATOR)
                          ->hasErrors()
                 ){
-                    return $this->sendResponse(['error' => $model->getErrors($this->inputName)]);
+                    return $this->sendResponse(['error' => $model->getErrors($this->attributeName)]);
                 }
                 if($sessionEnable){
                     $this->saveToSession($model->savePath);
@@ -59,7 +60,7 @@
                                            ]);
             }
 
-            return $this->sendResponse(['error' => $model->getErrors($this->inputName)]);
+            return $this->sendResponse(['error' => $model->getErrors($this->attributeName)]);
         }
 
         public function sendResponse($data, $format = self::FORMAT_JSON){
