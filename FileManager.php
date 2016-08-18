@@ -1,6 +1,6 @@
 <?php
     namespace yii\alexposseda\fileManager;
-    use alexposseda\filemanager\models\FileManagerModel;
+    use yii\alexposseda\fileManager\models\FileManagerModel;
     use Yii;
     use yii\base\Exception;
     use yii\base\InvalidConfigException;
@@ -54,7 +54,7 @@
 
                 return $this->createResponse([
                                                  'file' => [
-                                                     'storageUrl' => Yii::$app->fileManager->storageUrl,
+                                                     'storageUrl' => FileManager::getInstance()->getStorageUrl(),
                                                      'path' => $model->savePath
                                                  ]
                                              ], $format);
@@ -64,7 +64,7 @@
         }
 
         public function removeFile($path, $format = self::FORMAT_JSON){
-            $fullPath = $this->storagePath.$path;
+            $fullPath = $this->storagePath.DIRECTORY_SEPARATOR.$path;
             if(file_exists($fullPath)){
                 if(!unlink($fullPath)){
                     return $this->createResponse(['error' => ['Can not delete file']], $format);
@@ -93,7 +93,7 @@
         }
 
         public function createDirectory($newDirectory, $mod = 0777, $recursive = true){
-            FileHelper::createDirectory($this->storagePath.$newDirectory, $mod, $recursive);
+            FileHelper::createDirectory($this->storagePath.DIRECTORY_SEPARATOR.$newDirectory, $mod, $recursive);
         }
 
         protected function saveToSession($path){
