@@ -1,0 +1,24 @@
+{
+    "name": "alexposseda/filemanager",
+    "type": "yii2-extension",
+    "description": "The file manager for the Yii framework",
+    "keywords": ["yii2", "filemanager", "uploadFile", "ajax"],
+    "license": "BSD-3-Clause",
+    "support": {
+        "source": "https://github.com/alexposseda/fileManagerForYii2"
+    },
+    "authors": [
+        {
+            "name": "Alex Posseda",
+            "email": "alexposseda@gmail.com"
+        }
+    ],
+    "require": {
+        "yiisoft/yii2": "*"
+    },
+    "autoload": {
+        "psr-4": {
+            "yii\\alexposseda\\fileManager\\": ""
+        }
+    }
+}
