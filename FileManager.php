@@ -54,8 +54,9 @@
 
                 return $this->createResponse([
                                                  'file' => [
-                                                     'storageUrl' => FileManager::getInstance()->getStorageUrl(),
-                                                     'path' => $model->savePath
+                                                     'url' => FileManager::getInstance()->getStorageUrl(),
+                                                     'path' => $model->savePath,
+                                                     'type' => $model->type
                                                  ]
                                              ], $format);
             }
@@ -96,13 +97,17 @@
             FileHelper::createDirectory($this->storagePath.DIRECTORY_SEPARATOR.$newDirectory, $mod, $recursive);
         }
 
-        protected function saveToSession($path){
+        protected function saveToSession($path, $type = 'image'){
             $baseDir = substr($path, 0, strpos($path, DIRECTORY_SEPARATOR));
             $session = Yii::$app->session->get('uploadedFiles');
             if(!is_array($session)){
                 $session = [];
             }
-            $session[$baseDir][] = $path;
+            $session[$baseDir][] = [
+                'url' => $this->getStorageUrl(),
+                'path' => FileHelper::normalizePath($path),
+                'type' => $type
+            ];
             Yii::$app->session->set('uploadedFiles', $session);
         }
 
@@ -137,5 +142,9 @@
 
         public function getBaseValidationRules(){
             return $this->baseValidationRules;
+        }
+
+        public static function getFilesFromSession(){
+            return Yii::$app->session->get('uploadedFiles');
         }
     }

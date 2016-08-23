@@ -4,7 +4,6 @@
     use yii\alexposseda\fileManager\FileManager;
 
     class UploadPictureModel extends FileManagerModel{
-
         public function rules(){
             return $this->validationRules;
         }

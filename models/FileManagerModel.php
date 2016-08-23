@@ -16,6 +16,7 @@
         public $file;
         public $savePath;
         public $validationRules;
+        public $type = 'image';
 
         public function init(){
             parent::init();
