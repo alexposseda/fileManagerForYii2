@@ -97,31 +97,23 @@
             FileHelper::createDirectory($this->storagePath.DIRECTORY_SEPARATOR.$newDirectory, $mod, $recursive);
         }
 
-        protected function saveToSession($path, $type = 'image'){
-            $baseDir = substr($path, 0, strpos($path, DIRECTORY_SEPARATOR));
+        protected function saveToSession($path){
             $session = Yii::$app->session->get('uploadedFiles');
             if(!is_array($session)){
                 $session = [];
             }
-            $session[$baseDir][] = [
-                'url' => $this->getStorageUrl(),
-                'path' => FileHelper::normalizePath($path),
-                'type' => $type
-            ];
+            $session[] = $path;
             Yii::$app->session->set('uploadedFiles', $session);
         }
 
         protected function removeFromSession($path){
-            $baseDir = substr($path, 0, strpos($path, DIRECTORY_SEPARATOR));
             $session = Yii::$app->session->get('uploadedFiles');
             if(!is_array($session)){
                 $session = [];
             }else{
-                if(is_array($session[$baseDir])){
-                    foreach($session[$baseDir] as $index => $pathToFile){
-                        if($path == $pathToFile){
-                            array_splice($session[$baseDir], $index, 1);
-                        }
+                foreach($session as $index => $pathToFile){
+                    if($path == $pathToFile){
+                        array_splice($session, $index, 1);
                     }
                 }
             }
