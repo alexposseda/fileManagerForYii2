@@ -97,7 +97,7 @@
             FileHelper::createDirectory($this->storagePath.DIRECTORY_SEPARATOR.$newDirectory, $mod, $recursive);
         }
 
-        protected function saveToSession($path){
+        public function saveToSession($path){
             $session = Yii::$app->session->get('uploadedFiles');
             if(!is_array($session)){
                 $session = [];
@@ -106,7 +106,7 @@
             Yii::$app->session->set('uploadedFiles', $session);
         }
 
-        protected function removeFromSession($path){
+        public function removeFromSession($path){
             $session = Yii::$app->session->get('uploadedFiles');
             if(!is_array($session)){
                 $session = [];
